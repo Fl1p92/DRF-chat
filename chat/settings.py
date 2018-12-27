@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+
+    'apps.contact.apps.ContactConfig',
 ]
 
 MIDDLEWARE = [
