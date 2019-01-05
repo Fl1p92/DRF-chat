@@ -27,5 +27,5 @@ class UserDetail(generics.RetrieveAPIView):
 
 
 class UserContacts(generics.RetrieveAPIView):
-    queryset = ContactsList.objects.all()
+    queryset = ContactsList.objects.prefetch_related('contact_lines__contact')
     serializer_class = ContactsListSerializer
