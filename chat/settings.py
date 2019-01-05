@@ -40,6 +40,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ENABLE_DEBUG_TOOLBAR = env.bool('TS_ENABLE_DEBUG_TOOLBAR', default=DEBUG)
+
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS += ['debug_toolbar', ]
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
+
 ROOT_URLCONF = 'chat.urls'
 
 TEMPLATES = [
@@ -109,9 +115,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    BASE_DIR('static'),
-)
+# STATICFILES_DIRS = (
+#     BASE_DIR('static'),
+# )
 
 STATIC_ROOT = BASE_DIR('public/static')
 
@@ -120,3 +126,14 @@ STATIC_ROOT = BASE_DIR('public/static')
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR('public/media')
+
+# Debug-toolbar
+
+INTERNAL_IPS = ['127.0.0.1']
+
+DEBUG_TOOLBAR_CONFIG = {
+    'DISABLE_PANELS': [
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ],
+    'SHOW_TEMPLATE_CONTEXT': True,
+}

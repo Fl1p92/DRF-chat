@@ -7,6 +7,7 @@
 backcall==0.1.0           # via ipython
 click==7.0                # via pip-tools
 decorator==4.3.0          # via ipython, traitlets
+django-debug-toolbar==1.11
 django-environ==0.4.5
 django==2.1.4
 djangorestframework==3.9.0
@@ -23,5 +24,6 @@ ptyprocess==0.6.0         # via pexpect
 pygments==2.3.0           # via ipython
 pytz==2018.7              # via django
 six==1.11.0               # via pip-tools, prompt-toolkit, traitlets
+sqlparse==0.2.4           # via django-debug-toolbar
 traitlets==4.3.2          # via ipython
 wcwidth==0.1.7            # via prompt-toolkit
