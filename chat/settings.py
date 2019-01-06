@@ -40,7 +40,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ENABLE_DEBUG_TOOLBAR = env.bool('TS_ENABLE_DEBUG_TOOLBAR', default=DEBUG)
+ENABLE_DEBUG_TOOLBAR = env.bool('CH_ENABLE_DEBUG_TOOLBAR', default=DEBUG)
 
 if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS += ['debug_toolbar', ]

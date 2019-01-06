@@ -5,8 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import ContactsList
-from .serializers import UserSerializer, ContactsListSerializer
+from .models import ContactLine
+from .permissions import IsContactsOwner
+from .serializers import UserSerializer, ContactLineSerializer
 
 
 @api_view(['GET'])
@@ -26,6 +27,10 @@ class UserDetail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
 
-class UserContacts(generics.RetrieveAPIView):
-    queryset = ContactsList.objects.prefetch_related('contact_lines__contact')
-    serializer_class = ContactsListSerializer
+class UserContacts(generics.ListCreateAPIView):
+    serializer_class = ContactLineSerializer
+    permission_classes = (IsContactsOwner, )
+
+    def get_queryset(self):
+        queryset = ContactLine.objects.filter(contacts_list__owner__pk=self.kwargs['pk']).prefetch_related('contact')
+        return queryset
