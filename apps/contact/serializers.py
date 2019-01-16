@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from rest_framework import serializers
 
@@ -29,4 +30,8 @@ class ContactLineSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         user_contacts_list, _ = ContactsList.objects.get_or_create(owner=self.context['request'].user)
+        self.fields.update(created_datetime=serializers.SerializerMethodField())
         return super().save(contacts_list=user_contacts_list, **kwargs)
+
+    def get_created_datetime(self, obj):
+        return timezone.localtime().strftime('%d.%m.%Y %H:%M:%S')
