@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import ContactLine
-from .permissions import IsContactOwner
-from .serializers import UserSerializer, ContactLineSerializer
+from .permissions import IsOwner
+from .serializers import UserSerializer, ContactLineSerializer, PasswordChangeSerializer
 
 
 @api_view(['GET'])
@@ -42,3 +42,9 @@ class DeleteUserContactAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return ContactLine.objects.filter(contacts_list__owner=self.request.user)
+
+
+class UserPasswordChangeAPIView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = PasswordChangeSerializer
+    permission_classes = (IsOwner, )
