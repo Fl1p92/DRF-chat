@@ -1,7 +1,13 @@
 from rest_framework import permissions
 
 
-class IsContactsOwner(permissions.BasePermission):
+class IsOwner(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return view.kwargs['pk'] == request.user.pk
+        return view.kwargs.get('pk') == request.user.pk
+
+
+class IsContactOwner(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return obj.contacts_list.owner == request.user

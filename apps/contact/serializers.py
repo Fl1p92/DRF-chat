@@ -2,17 +2,14 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
-from .models import ContactLine
-from .models import ContactsList
+from .models import ContactLine, ContactsList
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-
-    contacts_list = serializers.HyperlinkedIdentityField(view_name='contactslist-detail')
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'contacts_list', )
+        fields = ('id', 'username', )
 
 
 class ContactLineSerializer(serializers.ModelSerializer):
@@ -21,10 +18,11 @@ class ContactLineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContactLine
-        fields = ('contact', )
+        fields = ('id', 'contact', )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # исключение имеющихся юзеров
         self.fields['contact'].queryset = User.objects.exclude(contact_lines__contacts_list__owner=self.context['request'].user)
 
     def save(self, **kwargs):
