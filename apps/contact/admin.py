@@ -12,4 +12,14 @@ class ContactsListAdmin(admin.ModelAdmin):
     inlines = [ContactLineInline, ]
 
 
+class BlackListLineInline(admin.TabularInline):
+    model = models.BlackListLine
+    extra = 0
+
+
+class BlackListAdmin(admin.ModelAdmin):
+    inlines = [BlackListLineInline, ]
+
+
 admin.site.register(models.ContactsList, ContactsListAdmin)
+admin.site.register(models.BlackList, BlackListAdmin)
