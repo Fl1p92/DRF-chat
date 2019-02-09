@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.utils import timezone
 
 from rest_framework import serializers
@@ -9,9 +10,15 @@ from .models import ContactLine, ContactsList
 
 class UserSerializer(serializers.ModelSerializer):
 
+    blocked = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('id', 'username', )
+        fields = ('id', 'username', 'blocked')
+
+    def get_blocked(self, obj):
+        return obj.blacklist_lines.filter(blacklist__owner=self.context['request'].user).exists()
+        # return self.context['request'].user.black_list.blacklist_lines.filter(blocked_contact=obj).exists()  # deprecated, +1 SQL request
 
 
 class ContactLineSerializer(serializers.ModelSerializer):
@@ -24,8 +31,12 @@ class ContactLineSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # исключение имеющихся юзеров
-        self.fields['contact'].queryset = User.objects.exclude(contact_lines__contacts_list__owner=self.context['request'].user)
+        # исключение request.user, имеющихся в contacts_list и заблокированных юзеров из предлагаемого списка контактов
+        self.fields['contact'].queryset = User.objects.exclude(
+            Q(pk=self.context['request'].user.pk) |
+            Q(contact_lines__contacts_list__owner=self.context['request'].user) |
+            Q(blacklist_lines__blacklist__owner=self.context['request'].user)
+        )
 
     def save(self, **kwargs):
         user_contacts_list, _ = ContactsList.objects.get_or_create(owner=self.context['request'].user)
