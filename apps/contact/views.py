@@ -16,6 +16,7 @@ def api_root(request, format=None):
     return Response({
         'users': reverse('user-list', request=request, format=format),
         'contacts': reverse('contact-list-detail', request=request, format=format),
+        'chats': reverse('chat-list', request=request, format=format),
     })
 
 

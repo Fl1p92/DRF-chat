@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'apps.contact.apps.ContactConfig',
+    'apps.chats.apps.ChatsConfig',
 ]
 
 MIDDLEWARE = [
