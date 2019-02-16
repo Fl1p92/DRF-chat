@@ -29,13 +29,13 @@ class ChatAPITests(APITestCase):
 
     def test_chat_create(self):
         # initial test
-        self.assertFalse(self.user_admin.chats.all().exists())
+        self.assertEqual(self.user_admin.chats.count(), 0)
 
         # create chat
         create_chat_response = self.client.post(reverse('chat-create', kwargs={'pk': self.user_test.pk}))
         self.assertEqual(create_chat_response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(create_chat_response.data, {"detail": f"Chat with {self.user_test} is created. ID # 1"})
-        self.assertTrue(self.user_admin.chats.all().exists())
+        self.assertEqual(self.user_admin.chats.count(), 1)
         self.assertEqual(list(self.user_admin.chats.first().users.all()), list(User.objects.filter(Q(pk=self.user_admin.pk) |
                                                                                                    Q(pk=self.user_test.pk))))
         # create chat with invalid user
@@ -50,3 +50,14 @@ class ChatAPITests(APITestCase):
         repeated_create_chat_response = self.client.post(reverse('chat-create', kwargs={'pk': self.user_test.pk}))
         self.assertEqual(repeated_create_chat_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(repeated_create_chat_response.data, {"detail": f"Chat with {self.user_test} is already exists."})
+
+    def test_chats_list(self):
+        # initial data
+        self.client.post(reverse('chat-create', kwargs={'pk': self.user_test.pk}))
+        self.client.post(reverse('chat-create', kwargs={'pk': self.second_user_test.pk}))
+        self.assertEqual(self.user_admin.chats.count(), 2)
+
+        # list of chats
+        get_response = self.client.get(reverse('chat-list'))
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(get_response.data), self.user_admin.chats.count())

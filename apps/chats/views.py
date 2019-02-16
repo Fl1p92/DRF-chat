@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 
-from rest_framework import status, views
+from rest_framework import generics, status, views
 from rest_framework.response import Response
 
 from .models import Chat
+from .serializers import ChatSerializer
 
 
 class CreateChatAPIView(views.APIView):
@@ -23,3 +24,11 @@ class CreateChatAPIView(views.APIView):
             chat.users.add(owner, user)
             return Response({"detail": f"Chat with {user} is created. ID # {chat.id}"},
                             status=status.HTTP_201_CREATED)
+
+
+class ListChatAPIView(generics.ListAPIView):
+    serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        queryset = Chat.objects.filter(owner=self.request.user)
+        return queryset
