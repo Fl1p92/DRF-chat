@@ -34,7 +34,7 @@ class ChatAPITests(APITestCase):
         # create chat
         create_chat_response = self.client.post(reverse('chat-create', kwargs={'pk': self.user_test.pk}))
         self.assertEqual(create_chat_response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(create_chat_response.data, {"detail": f"Chat with {self.user_test} is created. ID # 1"})
+        self.assertEqual(create_chat_response.data, {"detail": f"Chat with {self.user_test} is created. ID # 1."})
         self.assertEqual(self.user_admin.chats.count(), 1)
         self.assertEqual(list(self.user_admin.chats.first().users.all()), list(User.objects.filter(Q(pk=self.user_admin.pk) |
                                                                                                    Q(pk=self.user_test.pk))))
@@ -61,3 +61,12 @@ class ChatAPITests(APITestCase):
         get_response = self.client.get(reverse('chat-list'))
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(get_response.data), self.user_admin.chats.count())
+
+    def test_chat_destroy(self):
+        # initial data
+        self.client.post(reverse('chat-create', kwargs={'pk': self.user_test.pk}))
+        self.assertEqual(Chat.objects.count(), 1)
+
+        # delete chat
+        delete_post = self.client.delete(reverse('chat-destroy', kwargs={'pk': Chat.objects.first().pk}))
+        self.assertEqual(delete_post.status_code, status.HTTP_204_NO_CONTENT)

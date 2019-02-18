@@ -22,12 +22,19 @@ class CreateChatAPIView(views.APIView):
         else:
             chat = Chat.objects.create(owner=owner)
             chat.users.add(owner, user)
-            return Response({"detail": f"Chat with {user} is created. ID # {chat.id}"},
+            return Response({"detail": f"Chat with {user} is created. ID # {chat.id}."},
                             status=status.HTTP_201_CREATED)
 
 
 class ListChatAPIView(generics.ListAPIView):
     serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        queryset = Chat.objects.filter(owner=self.request.user)
+        return queryset
+
+
+class DestroyChatAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         queryset = Chat.objects.filter(owner=self.request.user)
