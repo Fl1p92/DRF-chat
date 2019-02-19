@@ -61,6 +61,8 @@ class ContactAPITests(APITestCase):
         object_deserialize.save()
         self.assertTrue(ContactsList.objects.filter(owner=self.user_admin).exists())
         self.assertEqual(ContactLine.objects.count(), 1)
+
+        # test which periodically crashes
         self.assertEqual(object_deserialize.data['created_datetime'], timezone.localtime().strftime('%d.%m.%Y %H:%M:%S'))
 
         # try create contact line with owner of contacts
